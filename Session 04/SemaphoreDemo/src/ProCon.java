@@ -36,9 +36,7 @@ class MyThread extends Thread
 		this.threadName = threadName;
 	}
 	
-	// Being lazy...
-	// Instead of coding Producer and Consumer separately
-	// They are here combined in one method
+	@Override
 	public void run()
 	{ 
 		
@@ -50,8 +48,17 @@ class MyThread extends Thread
 			{
 				try
 				{
+					// Wait until we may write (initially we are allowed)
+					// coming back here - we must wait for the "Consumer" to read
+					semPro.acquire();
 					Shared.count++; 
 					System.out.println(threadName + " Writes: " + Shared.count); 
+					// Signal the "Consumer" that a value is ready
+					semCon.release();
+					// Now, allowing a context switch -- if possible. 
+					// for thread Consumer to execute 
+					Thread.sleep(10); 
+
 				}
 				catch (InterruptedException exc)
 				{
@@ -71,8 +78,11 @@ class MyThread extends Thread
 			{
 				try
 				{
+					// Waiting for a value to be present (initially: Wait)
+					semCon.acquire();
 					System.out.println(threadName + " Reads: " + Shared.count);
 					// Signal the "Producer" that the value was read, so the buffer is now cleared
+					semPro.release();
 				}
 				catch (InterruptedException exc)
 				{
