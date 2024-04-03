@@ -46,7 +46,7 @@ public class ClassicIoWholeFile {
 		int lines = lineCount("input.txt", true);
 		long stopTime = System.nanoTime();
 		System.out.println("Lines: " + String.valueOf(lines));
-		System.out.println("Time it took: " + (stopTime - startTime - dryRun) + "  ");
+		System.out.println("Time to complete: " + (stopTime - startTime - dryRun) + "  " + dryRun);
 	}
 
 }
